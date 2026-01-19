@@ -1,5 +1,6 @@
 
 export type AgeGroup = '3-7' | '8-12';
+export type Language = 'en' | 'ar';
 
 export enum Category {
   DAILY_ROUTINES = 'daily_routines',
@@ -10,6 +11,7 @@ export enum Category {
 
 export interface Flashcard {
   word: string;
+  wordAr?: string;
   imageHint: string;
   exampleSentence?: string;
   audioKey?: string;
@@ -20,6 +22,7 @@ export interface Unit {
   category: Category;
   ageGroup: AgeGroup;
   theme: string;
+  themeAr: string;
   targetWords: string[];
   context: string;
   flashcards: Flashcard[];
@@ -35,11 +38,11 @@ export interface ChannelMapping {
   age_group: AgeGroup;
   common_topics: string[];
   featured_video_id?: string;
+  icon: string;
 }
 
-export interface LearningProgress {
-  category: Category;
-  currentWeek: number;
-  masteredWords: string[];
-  lastSession: string;
+export interface UserStats {
+  stars: number;
+  stickers: string[];
+  lastLanguage: Language;
 }
