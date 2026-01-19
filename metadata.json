@@ -1,0 +1,7 @@
+{
+  "name": "Luna's Montessori Journey",
+  "description": "A professional Montessori-inspired language learning platform for children that transforms YouTube viewing habits into structured educational experiences using the Stealth Learning model.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
