@@ -128,13 +128,13 @@ const App: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-100px)] lg:h-[calc(100vh-140px)] animate-in zoom-in duration-300">
             
             {/* Left Column: The Video */}
-            <div className="w-full lg:w-2/3 flex flex-col gap-4">
-              <div className="flex-1 bg-black rounded-3xl overflow-hidden shadow-2xl relative border-4 border-slate-800">
+            <div className="w-full lg:w-2/3 flex flex-col gap-3">
+              <div className="flex-1 bg-black rounded-3xl overflow-hidden shadow-2xl relative border-4 border-slate-800 min-h-[300px]">
                  {/* Using specific video ID for reliability */}
                  <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${currentChannel.featured_video_id || 'WRVsOCh907o'}?autoplay=1&modestbranding=1&rel=0`}
+                  src={`https://www.youtube.com/embed/${currentChannel.featured_video_id || 'WRVsOCh907o'}?autoplay=1&modestbranding=1&rel=0&origin=${window.location.origin}`}
                   title="YouTube Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -142,6 +142,19 @@ const App: React.FC = () => {
                   className="w-full h-full object-contain"
                 ></iframe>
               </div>
+              
+              {/* Fallback & Controls */}
+              <div className="flex justify-between items-center px-2">
+                 <a 
+                    href={`https://www.youtube.com/watch?v=${currentChannel.featured_video_id || 'WRVsOCh907o'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-slate-400 hover:text-red-500 font-medium flex items-center gap-1 transition-colors"
+                >
+                    <span>⚠️</span> Video not loading? Watch directly on YouTube
+                </a>
+              </div>
+
               <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-slate-800">{currentChannel.name}</h3>
@@ -149,7 +162,7 @@ const App: React.FC = () => {
                 </div>
                 <button 
                   onClick={() => setView('QUIZ')}
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow-lg transition-all text-sm"
+                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all text-sm transform hover:scale-105"
                 >
                   I found them! Start Quiz →
                 </button>
