@@ -1,10 +1,9 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { Category } from "../types";
+import { Category } from "../types.ts";
 
 export const getLunaEncouragement = async (category: Category, theme: string): Promise<string> => {
   try {
-    // Initialize GoogleGenAI with API key from environment variable directly
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -17,7 +16,6 @@ export const getLunaEncouragement = async (category: Category, theme: string): P
         topP: 0.95,
       }
     });
-    // Directly access .text property from GenerateContentResponse
     return response.text || `I see you love ${theme}! Ready to learn new words?`;
   } catch (error) {
     return `I see you love ${theme}! Ready to learn new words?`;

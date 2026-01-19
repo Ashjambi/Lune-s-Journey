@@ -16,31 +16,26 @@
         h1, h2, h3, .brand-font {
             font-family: 'Fredoka One', cursive;
         }
-        .bouncy {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .bouncy:hover {
-            transform: scale(1.05);
-        }
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .custom-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .custom-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
         }
     </style>
-    <!-- Polyfill for process.env -->
     <script>
-      window.process = {
-        env: {
-          NODE_ENV: 'development'
-        }
+      // Unified environment config
+      window.process = { env: { NODE_ENV: 'production' } };
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.error('System Error: ', msg, ' at ', url, ':', lineNo);
+        return false;
       };
     </script>
-    <!-- Babel for in-browser compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="importmap">
     {
@@ -56,8 +51,22 @@
     </script>
 </head>
 <body class="overflow-x-hidden">
+    <div id="loading-screen">
+        <div class="text-6xl animate-bounce mb-4">🦉</div>
+        <p class="text-blue-600 font-bold brand-font text-xl">Luna is waking up...</p>
+    </div>
     <div id="root"></div>
-    <!-- Entry point for the React App -->
-    <script type="text/babel" data-type="module" src="./index.tsx"></script>
+    <script type="text/babel" data-type="module">
+        import './index.tsx';
+        
+        // Signal ready
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading-screen');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
 </body>
 </html>

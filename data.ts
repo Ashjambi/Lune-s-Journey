@@ -1,11 +1,10 @@
 
-import { Category, ChannelMapping, Unit } from './types';
+import { Category, ChannelMapping, Unit } from './types.ts';
 
 export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UCbCmjCuTUZos6Inko4u57UQ",
     name: "Cocomelon",
-    // Bath Song - Highly likely to be embeddable
     featured_video_id: "WRVsOCh907o", 
     category: Category.DAILY_ROUTINES,
     age_group: "3-7",
@@ -14,7 +13,6 @@ export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UC9xF_6Sj5hMmwPqfO5GwYVg",
     name: "Ms Rachel",
-    // Baby Learning Video
     featured_video_id: "0c1A7q3c1Q0",
     category: Category.EARLY_LANGUAGE,
     age_group: "3-7",
@@ -23,7 +21,6 @@ export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UC1WkHmLQXlTuWJHeIIpSJKA",
     name: "Blippi",
-    // Excavator Song
     featured_video_id: "pL1jZf8_J_c",
     category: Category.EXPLORATION,
     age_group: "3-7",
@@ -32,7 +29,6 @@ export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UCoGeHA2Dn9yZYdR9KZ4FhAQ",
     name: "Super Simple Songs",
-    // Twinkle Twinkle Little Star
     featured_video_id: "yCjJyiqpAuU",
     category: Category.EARLY_LANGUAGE,
     age_group: "3-7",
@@ -41,7 +37,6 @@ export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UCqZQJ4w5A5vEYcVqNqy3d8A",
     name: "BBC Kids English",
-    // Greeting song
     featured_video_id: "tVlcKp3bWH8",
     category: Category.STRUCTURED_LANGUAGE,
     age_group: "8-12",
@@ -50,7 +45,6 @@ export const CHANNELS: ChannelMapping[] = [
   {
     channel_id: "UC7eHZXheF8nVqzGgKt7eWxQ",
     name: "Pinkfong",
-    // Baby Shark
     featured_video_id: "XqZsoesa55w",
     category: Category.DAILY_ROUTINES,
     age_group: "3-7",

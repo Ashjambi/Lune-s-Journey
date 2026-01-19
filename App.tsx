@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Category, AgeGroup, LearningProgress, Unit, ChannelMapping } from './types';
-import { CHANNELS, CURRICULUM } from './data';
-import { LunaCompanion } from './components/LunaCompanion';
-import { FlashcardViewer } from './components/FlashcardViewer';
-import { QuestionViewer } from './components/QuestionViewer';
-import { getLunaEncouragement } from './services/gemini';
+import { Category, AgeGroup, Unit, ChannelMapping } from './types.ts';
+import { CHANNELS, CURRICULUM } from './data.ts';
+import { LunaCompanion } from './components/LunaCompanion.tsx';
+import { FlashcardViewer } from './components/FlashcardViewer.tsx';
+import { QuestionViewer } from './components/QuestionViewer.tsx';
+import { getLunaEncouragement } from './services/gemini.ts';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'HOME' | 'WATCH_AND_LEARN' | 'QUIZ'>('HOME');
@@ -24,7 +24,6 @@ const App: React.FC = () => {
   const selectChannel = async (channel: ChannelMapping) => {
     setCurrentChannel(channel);
     
-    // Auto-select unit based on progress
     const units = CURRICULUM[channel.category];
     const currentIdx = progress[channel.category];
     const unit = units[currentIdx] || units[0];
@@ -33,12 +32,11 @@ const App: React.FC = () => {
     setView('WATCH_AND_LEARN');
     setLunaMessage(`Look for these things while you watch ${channel.name}!`);
     
-    // Fetch dynamic encouragement
     try {
       const msg = await getLunaEncouragement(channel.category, unit.theme);
       setLunaMessage(msg + " Can you spot these words in the video?");
     } catch(e) {
-      console.log("Offline mode for Gemini");
+      console.log("Encouragement fetch failed, using fallback.");
     }
   };
 
@@ -56,7 +54,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-blue-200">
-      {/* Header */}
       <header className="bg-white/90 backdrop-blur-md shadow-sm py-3 px-6 flex justify-between items-center border-b-2 border-slate-100 sticky top-0 z-50">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('HOME')}>
           <span className="text-3xl filter drop-shadow-md">🦉</span>
@@ -85,19 +82,15 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main className="flex-1 container mx-auto px-2 sm:px-4 py-4 max-w-7xl">
-        
         {view === 'HOME' && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto pt-8">
             <LunaCompanion message={lunaMessage} />
-            
             <section className="space-y-8">
               <div className="text-center">
                 <h2 className="text-4xl text-slate-800 brand-font">Pick a Show!</h2>
                 <p className="text-slate-500 font-medium mt-2">Watch & Learn at the same time!</p>
               </div>
-
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {CHANNELS.filter(c => c.age_group === ageGroup).map(channel => (
                   <button
@@ -110,12 +103,7 @@ const App: React.FC = () => {
                        channel.category === Category.EARLY_LANGUAGE ? '🔤' : 
                        channel.category === Category.EXPLORATION ? '🚜' : '📚'}
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors text-sm sm:text-base">{channel.name}</h3>
-                      <div className="mt-2 bg-slate-100 text-[10px] text-slate-500 font-bold px-2 py-1 rounded-full uppercase tracking-tighter">
-                        {channel.category.replace('_', ' ')}
-                      </div>
-                    </div>
+                    <h3 className="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors text-sm sm:text-base">{channel.name}</h3>
                   </button>
                 ))}
               </div>
@@ -123,14 +111,10 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* SPLIT VIEW MODE: Video + Learning together */}
         {view === 'WATCH_AND_LEARN' && currentChannel && currentUnit && (
-          <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-100px)] lg:h-[calc(100vh-140px)] animate-in zoom-in duration-300">
-            
-            {/* Left Column: The Video */}
+          <div className="flex flex-col lg:flex-row gap-6 h-full animate-in zoom-in duration-300">
             <div className="w-full lg:w-2/3 flex flex-col gap-3">
-              <div className="flex-1 bg-black rounded-3xl overflow-hidden shadow-2xl relative border-4 border-slate-800 min-h-[300px]">
-                 {/* Using specific video ID for reliability */}
+              <div className="aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl relative border-4 border-slate-800">
                  <iframe
                   width="100%"
                   height="100%"
@@ -139,93 +123,49 @@ const App: React.FC = () => {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  className="w-full h-full object-contain"
+                  className="w-full h-full"
                 ></iframe>
               </div>
-              
-              {/* Fallback & Controls */}
-              <div className="flex justify-between items-center px-2">
-                 <a 
-                    href={`https://www.youtube.com/watch?v=${currentChannel.featured_video_id || 'WRVsOCh907o'}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-slate-400 hover:text-red-500 font-medium flex items-center gap-1 transition-colors"
-                >
-                    <span>⚠️</span> Video not loading? Watch directly on YouTube
-                </a>
-              </div>
-
               <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-slate-800">{currentChannel.name}</h3>
-                  <p className="text-xs text-slate-400">Can you find the magic words?</p>
+                  <p className="text-xs text-slate-400">Spot the words!</p>
                 </div>
                 <button 
                   onClick={() => setView('QUIZ')}
                   className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all text-sm transform hover:scale-105"
                 >
-                  I found them! Start Quiz →
+                  I'm Ready for the Quiz! →
                 </button>
               </div>
             </div>
-
-            {/* Right Column: Interactive Companion */}
             <div className="w-full lg:w-1/3 bg-white rounded-[2rem] shadow-xl border-2 border-blue-100 flex flex-col overflow-hidden">
                <div className="bg-blue-50 p-6 border-b border-blue-100">
-                 <div className="flex items-center gap-3 mb-2">
-                   <div className="text-3xl animate-bounce">🦉</div>
-                   <div className="bg-white px-3 py-1 rounded-full text-xs font-bold text-blue-600 shadow-sm border border-blue-100">
-                     Luna's Challenge
-                   </div>
-                 </div>
-                 <p className="text-slate-700 font-medium text-sm italic">
-                   "{lunaMessage}"
-                 </p>
+                 <p className="text-slate-700 font-medium text-sm italic">"{lunaMessage}"</p>
                </div>
-               
-               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 custom-scrollbar">
-                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest text-center mb-2">
-                   Look for these:
-                 </h4>
-                 
-                 {/* Mini Flashcards List */}
-                 <div className="grid grid-cols-2 gap-3">
-                   {currentUnit.flashcards.map((card, idx) => (
-                     <div key={idx} className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-yellow-400 hover:shadow-md transition-all group cursor-pointer" onClick={() => {
-                        if ('speechSynthesis' in window) {
-                          const utterance = new SpeechSynthesisUtterance(card.word);
-                          speechSynthesis.speak(utterance);
-                        }
-                     }}>
-                       <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-slate-100">
-                         <img src={card.imageHint} alt={card.word} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
-                       </div>
-                       <p className="text-center font-bold text-slate-700 capitalize text-sm">{card.word}</p>
-                     </div>
-                   ))}
-                 </div>
+               <div className="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-3 bg-slate-50/50">
+                 {currentUnit.flashcards.map((card, idx) => (
+                   <div key={idx} className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-yellow-400 group cursor-pointer" onClick={() => {
+                      if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(card.word);
+                        speechSynthesis.speak(utterance);
+                      }
+                   }}>
+                     <img src={card.imageHint} alt={card.word} className="w-full aspect-square object-cover rounded-xl mb-2" />
+                     <p className="text-center font-bold text-slate-700 capitalize text-sm">{card.word}</p>
+                   </div>
+                 ))}
                </div>
             </div>
-
           </div>
         )}
 
         {view === 'QUIZ' && currentUnit && (
           <div className="max-w-2xl mx-auto">
-             <button 
-                onClick={() => setView('WATCH_AND_LEARN')}
-                className="mb-4 text-slate-400 hover:text-blue-500 font-bold text-sm flex items-center gap-1"
-              >
-                ← Back to Video
-              </button>
-            <QuestionViewer 
-              questions={currentUnit.comprehensionQuestions} 
-              theme={currentUnit.theme} 
-              onComplete={finishLesson} 
-            />
+            <QuestionViewer questions={currentUnit.comprehensionQuestions} theme={currentUnit.theme} onComplete={finishLesson} />
           </div>
         )}
-
       </main>
     </div>
   );
